@@ -4,7 +4,7 @@ namespace StackDriverLogger;
 
 use Illuminate\Support\ServiceProvider;
 
-class StackDriverServiceProvider extends ServiceProvider
+class LaravelStackDriverServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
@@ -23,7 +23,7 @@ class StackDriverServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('stackdriver-logger', function() {
+        $this->app->bind('laravel-stackdriver-logger', function() {
             return new StackDriverLogger();
         });
     }

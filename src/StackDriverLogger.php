@@ -66,7 +66,7 @@ class StackDriverLogger
             }
 
             // Creates the log entry
-            $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(), [
+            $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(). ' - File: '. $log->getFile(), [
                 'severity' => $severity
             ]);
             

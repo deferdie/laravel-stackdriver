@@ -13,7 +13,7 @@ class LaravelStackDriverServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 
+        
     }
 
     /**

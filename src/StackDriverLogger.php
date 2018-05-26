@@ -4,7 +4,7 @@ namespace StackDriverLogger;
 
 use Google\Cloud\Logging\LoggingClient;
 
-class ClientExceptionLogger
+class StackDriverLogger
 {
     /**
      * Google Cloud Platform project ID
@@ -35,7 +35,7 @@ class ClientExceptionLogger
 
     public function __construct()
     {
-        $this->project_id = env('GCP_project_id');
+        $this->project_id = env('GCP_PROJECT_ID');
 
         // Instantiates a client
         $this->loggingClient = new LoggingClient([
@@ -43,18 +43,23 @@ class ClientExceptionLogger
         ]);
 
         // The name of the log to write to
-        $this->logName = env('GCP_log_name');
+        $this->logName = env('GCP_LOG_NAME');
 
         // Selects the log to write to
-        $this->logger = $this->loggingClient->logger($logName);
+        $this->logger = $this->loggingClient->logger($this->logName);
     }
 
     public function log($log)
     {
-        # Creates the log entry
-        $entry = $this->logger->entry($log);
-
-        # Writes the log entry
-        $logger->write($entry);
+        if(gettype($log) == "object")
+        {
+            // Creates the log entry
+            $entry = $this->logger->entry($log->getMessage(), [
+                'severity' => 'ERROR'
+            ]);
+            
+            // Writes the log entry
+            $this->logger->write($entry);
+        }
     }
 }

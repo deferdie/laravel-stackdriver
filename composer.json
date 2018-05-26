@@ -1,0 +1,25 @@
+{
+    "name": "deferdie/Laravel-Stackdriver",
+    "description": "An exception logger for Laravel to log to Google Stackdriver",
+    "type": "laravel",
+
+    "require": {
+        "google/cloud-logging": "^1.11"
+    },
+
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ferdie De Oliveira",
+            "email": "deferdie@gmail.com"
+        }
+    ],
+
+    "minimum-stability": "dev-master",
+
+    "autoload": {
+        "psr-4": {
+            "StackDriverLogger\\": "src/"
+        }
+    }
+}

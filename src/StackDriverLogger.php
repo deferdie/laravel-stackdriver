@@ -51,15 +51,35 @@ class StackDriverLogger
 
     public function log($log)
     {
-        if(gettype($log) == "object")
-        {
+        if (gettype($log) == "object") {
+
+            $code = $log->getCode();
+
+            $severity  = 'INFO';
+
+            if ($code == 0 || $code == 500) {
+                $severity = 'CRITICAL';
+            }
+            
+            if ($code == 404) {
+                $severity = 'WARNING';
+            }
+
             // Creates the log entry
-            $entry = $this->logger->entry($log->getMessage(), [
-                'severity' => 'ERROR'
+            $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(), [
+                'severity' => $severity
             ]);
             
             // Writes the log entry
             $this->logger->write($entry);
+
+            return;
         }
+
+        // Creates the log entry
+        $entry = $this->logger->entry($log);
+        
+        // Writes the log entry
+        $this->logger->write($entry);
     }
 }

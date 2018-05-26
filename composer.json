@@ -1,5 +1,5 @@
 {
-    "name": "deferdie/Laravel-Stackdriver",
+    "name": "deferdie/laravel-stackdriver",
     "description": "An exception logger for Laravel to log to Google Stackdriver",
     "type": "laravel",
 

@@ -13,7 +13,7 @@ class LaravelStackDriverServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        require __DIR__.'/routes/routes.php';
+        // 
     }
 
     /**
@@ -23,7 +23,7 @@ class LaravelStackDriverServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('laravel-stackdriver-logger', function() {
+        $this->app->bind('deferdie-StackDriverLogger', function() {
             return new StackDriverLogger();
         });
     }

@@ -8,6 +8,6 @@ class LaravelStackDriverFacade extends Facade
 {
 	protected static function getFacadeAccessor()
 	{
-		return 'laravel-stackdriver-logger';
+		return 'deferdie-StackDriverLogger';
 	}
 }

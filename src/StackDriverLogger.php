@@ -53,7 +53,7 @@ class StackDriverLogger
     {
         if (gettype($log) == "object") {
 
-            $code = $log->getCode();
+            $code = (get_class($log) === 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException') ? $log->getStatusCode() : $log->getCode();
 
             $severity  = 'INFO';
 
@@ -66,8 +66,14 @@ class StackDriverLogger
             }
 
             // Creates the log entry
-            $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(). ' - File: '. $log->getFile(), [
-                'severity' => $severity
+            $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(). ' - File: '. $log->getFile() . ' - Code: '. $code, [
+                'severity' => $severity,
+                'labels' => [
+                    'APP_NAME' => env('APP_NAME'),
+                    'APP_ENV' => env('APP_ENV'),
+                    'ERROR_CODE' => "$code",
+                    'URL' => $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']
+                ],
             ]);
             
             // Writes the log entry

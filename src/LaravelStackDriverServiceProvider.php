@@ -13,7 +13,9 @@ class LaravelStackDriverServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        $this->publishes([
+            __DIR__ . '/../config/stack_driver.php' => config_path('stack_driver.php'),
+        ]);
     }
 
     /**
@@ -23,7 +25,7 @@ class LaravelStackDriverServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('deferdie-StackDriverLogger', function() {
+        $this->app->bind('deferdie-StackDriverLogger', function () {
             return new StackDriverLogger();
         });
     }

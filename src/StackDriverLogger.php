@@ -72,7 +72,7 @@ class StackDriverLogger
                     'APP_NAME' => env('APP_NAME'),
                     'APP_ENV' => env('APP_ENV'),
                     'ERROR_CODE' => "$code",
-                    'URL' => $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']
+                    'URL' => $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : 'Not Found'
                 ],
             ]);
             

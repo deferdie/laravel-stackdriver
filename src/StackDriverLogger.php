@@ -8,25 +8,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class StackDriverLogger
 {
     /**
-     * Google Cloud Platform project ID
-     *
-     * @var $string
-     */
-    protected $project_id;
-
-    /**
      * Google Cloud client logger
      *
      * @var $LoggingClient
      */
     protected $loggingClient;
-
-    /**
-     * Log name
-     *
-     * @var $string
-     */
-    protected $logName;
 
     /**
      * Log
@@ -36,19 +22,17 @@ class StackDriverLogger
 
     public function __construct()
     {
-        $this->project_id = config('stack_driver.project_id');
-
         // Instantiates a client
         $this->loggingClient = new LoggingClient([
-            'projectId' => $this->project_id,
-            'keyFilePath' => config('stack_driver.credentials'),
+            'projectId' => config('stack_driver.project_id'),
+            'keyFilePath' => config('stack_driver.key_file_path'),
+            'requestTimeout' => config('stack_driver.request_timeout'),
+            'retries' => config('stack_driver.retries'),
+            'transport' => config('stack_driver.transport'),
         ]);
 
-        // The name of the log to write to
-        $this->logName = config('stack_driver.log_name');
-
         // Selects the log to write to
-        $this->logger = $this->loggingClient->logger($this->logName);
+        $this->logger = $this->loggingClient->logger(config('stack_driver.log_name'));
     }
 
     public function log($log)
@@ -73,7 +57,7 @@ class StackDriverLogger
                     'APP_NAME' => config('app.name'),
                     'APP_ENV' => config('app.env'),
                     'ERROR_CODE' => "$code",
-                    'URL' => request()->url() ?: 'Not Found'
+                    'URL' => request()->url(),
                 ],
             ]);
 

@@ -3,30 +3,17 @@
 namespace StackDriverLogger;
 
 use Google\Cloud\Logging\LoggingClient;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StackDriverLogger
 {
-    /**
-     * Google Cloud Platform project ID
-     *
-     * @var $string
-     */
-    protected $project_id;
-    
     /**
      * Google Cloud client logger
      *
      * @var $LoggingClient
      */
     protected $loggingClient;
-    
-    /**
-     * Log name
-     *
-     * @var $string
-     */
-    protected $logName;
-    
+
     /**
      * Log
      *
@@ -35,32 +22,30 @@ class StackDriverLogger
 
     public function __construct()
     {
-        $this->project_id = env('GCP_PROJECT_ID');
-
         // Instantiates a client
         $this->loggingClient = new LoggingClient([
-            'projectId' => $this->project_id
+            'projectId' => config('stack_driver.project_id'),
+            'keyFilePath' => config('stack_driver.key_file_path'),
+            'requestTimeout' => config('stack_driver.request_timeout'),
+            'retries' => config('stack_driver.retries'),
+            'transport' => config('stack_driver.transport'),
         ]);
 
-        // The name of the log to write to
-        $this->logName = env('GCP_LOG_NAME');
-
         // Selects the log to write to
-        $this->logger = $this->loggingClient->logger($this->logName);
+        $this->logger = $this->loggingClient->logger(config('stack_driver.log_name'));
     }
 
     public function log($log)
     {
         if (gettype($log) == "object") {
-
-            $code = (get_class($log) === 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException') ? $log->getStatusCode() : $log->getCode();
+            $code = (get_class($log) === NotFoundHttpException::class) ? $log->getStatusCode() : $log->getCode();
 
             $severity  = 'INFO';
 
             if ($code == 0 || $code == 500) {
                 $severity = 'CRITICAL';
             }
-            
+
             if ($code == 404) {
                 $severity = 'WARNING';
             }
@@ -69,13 +54,13 @@ class StackDriverLogger
             $entry = $this->logger->entry($log->getMessage() . ' - Line: '. $log->getLine(). ' - File: '. $log->getFile() . ' - Code: '. $code, [
                 'severity' => $severity,
                 'labels' => [
-                    'APP_NAME' => env('APP_NAME'),
-                    'APP_ENV' => env('APP_ENV'),
+                    'APP_NAME' => config('app.name'),
+                    'APP_ENV' => config('app.env'),
                     'ERROR_CODE' => "$code",
-                    'URL' => $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : 'Not Found'
+                    'URL' => request()->url(),
                 ],
             ]);
-            
+
             // Writes the log entry
             $this->logger->write($entry);
 
@@ -84,7 +69,7 @@ class StackDriverLogger
 
         // Creates the log entry
         $entry = $this->logger->entry($log);
-        
+
         // Writes the log entry
         $this->logger->write($entry);
     }
